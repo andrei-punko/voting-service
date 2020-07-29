@@ -42,10 +42,17 @@ public class VotingService implements InitializingBean {
     public List<VotingResultItem> getVotingResults() {
         List<VotingResultItem> result = new ArrayList<>();
 
-        for (String candidateId : votingMap.keySet()) { // TODO: adjust
-            result.add(new VotingResultItem(candidateIdToCandidateMap.get(candidateId), votingMap.get(candidateId).size()));
+        for (String candidateId : candidateIdToCandidateMap.keySet()) {
+            result.add(new VotingResultItem(candidateIdToCandidateMap.get(candidateId), extractSize(candidateId)));
         }
         return result;
+    }
+
+    private int extractSize(String candidateId) {
+        if (!votingMap.containsKey(candidateId)) {
+            return 0;
+        }
+        return votingMap.get(candidateId).size();
     }
 
     @Override
