@@ -55,6 +55,18 @@ class VotingServiceTest {
 
     @Test
     void getVotingResults() {
+        List<VotingResultItem> votingResults = votingService.getVotingResults();
+
+        assertThat("Wrong votingResults amount", votingResults.size(), is(3));
+
+        assertThat("Wrong votingResults[0].candidate", votingResults.get(0).getCandidate(), is(new CandidateItem("54654", "Candidate B")));
+        assertThat("Wrong votingResults[0].usersAmount", votingResults.get(0).getUsersAmount(), is(0));
+
+        assertThat("Wrong votingResults[1].candidate", votingResults.get(1).getCandidate(), is(new CandidateItem("3434", "Candidate A")));
+        assertThat("Wrong votingResults[1].usersAmount", votingResults.get(1).getUsersAmount(), is(0));
+
+        assertThat("Wrong votingResults[2].candidate", votingResults.get(2).getCandidate(), is(new CandidateItem("4565", "Candidate C")));
+        assertThat("Wrong votingResults[2].usersAmount", votingResults.get(2).getUsersAmount(), is(0));
     }
 
     @Test

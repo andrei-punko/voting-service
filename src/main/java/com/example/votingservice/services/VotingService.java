@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +63,7 @@ public class VotingService implements InitializingBean {
             new TypeReference<List<CandidateItem>>() {
             });
 
-        candidateIdToCandidateMap = new HashMap<>();
+        candidateIdToCandidateMap = new LinkedHashMap<>();
         candidates.forEach(item -> {
             candidateIdToCandidateMap.put(item.getId(), item);
         });
