@@ -1,4 +1,4 @@
-package com.example.votingservice.dto;
+package com.example.votingservice.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VotingResultItem {
 
-    private CandidateItem candidateId;
+    private CandidateItem candidate;
     private int usersAmount;
 }

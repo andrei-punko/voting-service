@@ -1,4 +1,4 @@
-package com.example.votingservice.dto;
+package com.example.votingservice.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

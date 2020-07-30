@@ -1,4 +1,4 @@
-package com.example.votingservice.dto;
+package com.example.votingservice.dto.request;
 
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

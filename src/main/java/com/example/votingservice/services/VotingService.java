@@ -1,8 +1,8 @@
 package com.example.votingservice.services;
 
-import com.example.votingservice.dto.CandidateItem;
-import com.example.votingservice.dto.VotingRequest;
-import com.example.votingservice.dto.VotingResultItem;
+import com.example.votingservice.dto.response.CandidateItem;
+import com.example.votingservice.dto.request.VotingRequest;
+import com.example.votingservice.dto.response.VotingResultItem;
 import com.example.votingservice.exceptions.DoubleVoteException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

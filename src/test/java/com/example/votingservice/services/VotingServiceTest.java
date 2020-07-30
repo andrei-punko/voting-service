@@ -3,7 +3,8 @@ package com.example.votingservice.services;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import com.example.votingservice.dto.CandidateItem;
+import com.example.votingservice.dto.response.CandidateItem;
+import com.example.votingservice.dto.response.VotingResultItem;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +44,7 @@ class VotingServiceTest {
         String[] expectedNames = {"Candidate A", "Candidate B", "Candidate C"};
 
         Set<String> names = candidates.stream().map(CandidateItem::getName).collect(Collectors.toSet());
-        for (String name: expectedNames) {
+        for (String name : expectedNames) {
             assertThat(String.format("Name %s is absent", name), names.contains(name), is(true));
         }
     }
