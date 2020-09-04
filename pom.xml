@@ -16,6 +16,8 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<swagger.version>2.9.2</swagger.version>
+		<swagger-annotations.version>1.5.21</swagger-annotations.version>
 	</properties>
 
 	<dependencies>
@@ -43,6 +45,38 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<!-- Swagger -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${swagger.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>io.swagger</groupId>
+					<artifactId>swagger-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.swagger</groupId>
+					<artifactId>swagger-models</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${swagger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${swagger-annotations.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-models</artifactId>
+			<version>${swagger-annotations.version}</version>
 		</dependency>
 	</dependencies>
 
