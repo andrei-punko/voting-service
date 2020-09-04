@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class VotingResultItem {
 
     private CandidateItem candidate;
-    private int usersAmount;
+    private int votesAmount;
 }
