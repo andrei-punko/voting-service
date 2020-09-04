@@ -3,10 +3,11 @@ package com.example.votingservice.services;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import com.example.votingservice.dto.request.VotingRequest;
 import com.example.votingservice.dto.response.CandidateItem;
-import com.example.votingservice.dto.response.VotingResultItem;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,21 +56,23 @@ class VotingServiceTest {
 
     @Test
     void getVotingResults() {
-        List<VotingResultItem> votingResults = votingService.getVotingResults().getVotings();
+        Map<String, Long> votingResults = votingService.getVotingResults().getVotings();
 
         assertThat("Wrong votingResults amount", votingResults.size(), is(3));
-
-        assertThat("Wrong votingResults[0].candidate", votingResults.get(0).getCandidate(), is(new CandidateItem("54654", "Candidate B")));
-        assertThat("Wrong votingResults[0].usersAmount", votingResults.get(0).getVotesAmount(), is(0));
-
-        assertThat("Wrong votingResults[1].candidate", votingResults.get(1).getCandidate(), is(new CandidateItem("3434", "Candidate A")));
-        assertThat("Wrong votingResults[1].usersAmount", votingResults.get(1).getVotesAmount(), is(0));
-
-        assertThat("Wrong votingResults[2].candidate", votingResults.get(2).getCandidate(), is(new CandidateItem("4565", "Candidate C")));
-        assertThat("Wrong votingResults[2].usersAmount", votingResults.get(2).getVotesAmount(), is(0));
+        assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(0L));
+        assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0L));
+        assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(0L));
     }
 
     @Test
-    void makeVote() {
+    void getVotingResultsAfterVoting() {
+        votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
+        votingService.makeVote("4565", new VotingRequest("Sergei", "322893"));
+        votingService.makeVote("4565", new VotingRequest("Andrei", "322894"));
+
+        Map<String, Long> votingResults = votingService.getVotingResults().getVotings();
+        assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(1L));
+        assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0L));
+        assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(2L));
     }
 }

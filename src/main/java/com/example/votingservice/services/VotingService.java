@@ -1,17 +1,14 @@
 package com.example.votingservice.services;
 
-import com.example.votingservice.dto.response.CandidateItem;
 import com.example.votingservice.dto.request.VotingRequest;
+import com.example.votingservice.dto.response.CandidateItem;
 import com.example.votingservice.dto.response.CandidatesResponse;
-import com.example.votingservice.dto.response.VotingResultItem;
 import com.example.votingservice.dto.response.VotingsResponse;
 import com.example.votingservice.exceptions.DoubleVoteException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,9 +19,9 @@ import org.springframework.stereotype.Service;
 public class VotingService implements InitializingBean {
 
     private List<CandidateItem> candidates;
-    private Map<String, CandidateItem> candidateIdToCandidateMap;
 
     private Map<String, Set<VotingRequest>> votingMap = new HashMap<>();
+    private Map<String, Long> votingResultsMap = new HashMap<>();
 
     public CandidatesResponse getCandidates() {
         return new CandidatesResponse(candidates);
@@ -40,22 +37,12 @@ public class VotingService implements InitializingBean {
         if (!votingRequestSet.add(votingRequest)) {
             throw new DoubleVoteException();
         }
+
+        votingResultsMap.merge(candidateId, 0L, (oldValue, newValue) -> oldValue + 1);
     }
 
     public VotingsResponse getVotingResults() {
-        List<VotingResultItem> result = new ArrayList<>();
-
-        for (String candidateId : candidateIdToCandidateMap.keySet()) {
-            result.add(new VotingResultItem(candidateIdToCandidateMap.get(candidateId), extractSize(candidateId)));
-        }
-        return new VotingsResponse(result);
-    }
-
-    private int extractSize(String candidateId) {
-        if (!votingMap.containsKey(candidateId)) {
-            return 0;
-        }
-        return votingMap.get(candidateId).size();
+        return new VotingsResponse(votingResultsMap);
     }
 
     @Override
@@ -65,9 +52,8 @@ public class VotingService implements InitializingBean {
             new TypeReference<List<CandidateItem>>() {
             });
 
-        candidateIdToCandidateMap = new LinkedHashMap<>();
         candidates.forEach(item -> {
-            candidateIdToCandidateMap.put(item.getId(), item);
+            votingResultsMap.put(item.getId(), 0L);
         });
     }
 }
