@@ -2,7 +2,9 @@ package com.example.votingservice.services;
 
 import com.example.votingservice.dto.response.CandidateItem;
 import com.example.votingservice.dto.request.VotingRequest;
+import com.example.votingservice.dto.response.CandidatesResponse;
 import com.example.votingservice.dto.response.VotingResultItem;
+import com.example.votingservice.dto.response.VotingsResponse;
 import com.example.votingservice.exceptions.DoubleVoteException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +26,8 @@ public class VotingService implements InitializingBean {
 
     private Map<String, Set<VotingRequest>> votingMap = new HashMap<>();
 
-    public List<CandidateItem> getCandidates() {
-        return candidates;
+    public CandidatesResponse getCandidates() {
+        return new CandidatesResponse(candidates);
     }
 
     public void makeVote(String candidateId, VotingRequest votingRequest) {
@@ -40,13 +42,13 @@ public class VotingService implements InitializingBean {
         }
     }
 
-    public List<VotingResultItem> getVotingResults() {
+    public VotingsResponse getVotingResults() {
         List<VotingResultItem> result = new ArrayList<>();
 
         for (String candidateId : candidateIdToCandidateMap.keySet()) {
             result.add(new VotingResultItem(candidateIdToCandidateMap.get(candidateId), extractSize(candidateId)));
         }
-        return result;
+        return new VotingsResponse(result);
     }
 
     private int extractSize(String candidateId) {

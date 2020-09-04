@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.example.votingservice.dto.response.CandidateItem;
 import com.example.votingservice.dto.response.VotingResultItem;
+import com.example.votingservice.dto.response.VotingsResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,14 +25,14 @@ class VotingServiceTest {
 
     @Test
     void getCandidatesAmount() {
-        List<CandidateItem> result = votingService.getCandidates();
+        List<CandidateItem> result = votingService.getCandidates().getCandidates();
 
         assertThat("Wrong items amount", result.size(), is(3));
     }
 
     @Test
     void getCandidatesContent() {
-        Set<CandidateItem> result = new HashSet<>(votingService.getCandidates());
+        Set<CandidateItem> result = new HashSet<>(votingService.getCandidates().getCandidates());
 
         checkCandidateExistence(result, new CandidateItem("3434", "Candidate A"));
         checkCandidateExistence(result, new CandidateItem("54654", "Candidate B"));
@@ -40,7 +41,7 @@ class VotingServiceTest {
 
     @Test
     void getCandidatesCheckByName() {
-        List<CandidateItem> candidates = votingService.getCandidates();
+        List<CandidateItem> candidates = votingService.getCandidates().getCandidates();
         String[] expectedNames = {"Candidate A", "Candidate B", "Candidate C"};
 
         Set<String> names = candidates.stream().map(CandidateItem::getName).collect(Collectors.toSet());
@@ -55,7 +56,7 @@ class VotingServiceTest {
 
     @Test
     void getVotingResults() {
-        List<VotingResultItem> votingResults = votingService.getVotingResults();
+        List<VotingResultItem> votingResults = votingService.getVotingResults().getVotings();
 
         assertThat("Wrong votingResults amount", votingResults.size(), is(3));
 
