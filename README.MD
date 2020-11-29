@@ -10,5 +10,15 @@
 ## How to start:
 Use `run.bat` script in project root folder
 
-## Inspect service endpoints via Swagger:
-Use next link for that: `http://localhost:8090/swagger-ui.html`
+## Swagger documentation:
+http://localhost:8090/swagger-ui.html
+
+## Useful CURL commands:
+- Get candidates:
+`curl http://localhost:8090/candidates`
+
+- Get votings:
+`curl http://localhost:8090/votings`
+
+- Make vote:
+`curl -X POST http://localhost:8090/votings/3434 -H "Content-Type: application/json" -d "{ \"name\": \"Andrei\", \"passportId\": \"MP345353634543\"}"`
