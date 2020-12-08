@@ -6,9 +6,18 @@
 - Get candidates (should be read from json file)
 - Make vote (by passport id) (no double vote allowed)
 - Get voting results
+---
+
+## How to build:
+    mvn clean install
+
+## How to build Docker image with application inside:
+    docker build ./ -t voting-service-app
 
 ## How to start:
-Use `run.bat` script in project root folder
+- Use `run.bat` script in project root folder or
+- Use Docker compose:  
+  `docker-compose up`
 
 ## Swagger documentation:
 http://localhost:8090/swagger-ui.html
@@ -17,7 +26,7 @@ http://localhost:8090/swagger-ui.html
 - Get candidates:
 `curl http://localhost:8090/candidates`
 
-- Get votings:
+- Get voting results:
 `curl http://localhost:8090/votings`
 
 - Make vote:

@@ -1,0 +1,10 @@
+version: "3"
+services:
+  backend-template-app:
+    image: voting-service-app:latest
+    network_mode: bridge
+    container_name: voting-service-app
+    expose:
+      - 8090
+    ports:
+      - 8090:8090
