@@ -31,3 +31,9 @@ http://localhost:8090/swagger-ui.html
 
 - Make vote:
 `curl -X POST http://localhost:8090/votings/3434 -H "Content-Type: application/json" -d "{ \"name\": \"Andrei\", \"passportId\": \"MP345353634543\"}"`
+
+## How to run Spock functional tests
+    cd func-tests
+    ./gradlew clean build
+
+Check tests report at `./func-tests/build/spock-reports/index.html`
