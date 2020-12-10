@@ -2,6 +2,8 @@ package com.example.votingservice.services;
 
 import com.example.votingservice.dto.request.VotingRequest;
 import com.example.votingservice.dto.response.CandidateItem;
+import com.example.votingservice.exceptions.DoubleVoteException;
+import com.example.votingservice.exceptions.UnknownCandidateException;
 import com.example.votingservice.services.impl.VotingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class VotingServiceTest {
 
@@ -64,6 +67,27 @@ class VotingServiceTest {
         assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(0L));
         assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0L));
         assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(0L));
+    }
+
+    @Test
+    public void makeVoteForUnknownCandidate() {
+        try {
+            votingService.makeVote("bla-bla", new VotingRequest("Vasya", "322982"));
+            fail("UnknownCandidateException should be thrown");
+        } catch (UnknownCandidateException uce) {
+            assertThat(uce.getMessage(), is("Unknown candidate id!"));
+        }
+    }
+
+    @Test
+    public void tryDoubleVote() {
+        votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
+        try {
+            votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
+            fail("DoubleVoteException should be thrown");
+        } catch (DoubleVoteException uce) {
+            assertThat(uce.getMessage(), is("User already voted!"));
+        }
     }
 
     @Test

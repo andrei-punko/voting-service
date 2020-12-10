@@ -1,10 +1,12 @@
 package com.example.votingservice.services.impl;
 
+import ch.qos.logback.core.BasicStatusManager;
 import com.example.votingservice.dto.request.VotingRequest;
 import com.example.votingservice.dto.response.CandidateItem;
 import com.example.votingservice.dto.response.CandidatesResponse;
 import com.example.votingservice.dto.response.VotingsResponse;
 import com.example.votingservice.exceptions.DoubleVoteException;
+import com.example.votingservice.exceptions.UnknownCandidateException;
 import com.example.votingservice.services.IVotingService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +27,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
     private Map<String, Set<VotingRequest>> votingMap = new HashMap<>();
     private Map<String, Long> votingResultsMap = new HashMap<>();
+    private Set<String> candidateIds = new HashSet<>();
 
     @Override
     public CandidatesResponse getCandidates() {
@@ -33,6 +36,10 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public void makeVote(String candidateId, VotingRequest votingRequest) {
+        if (!candidateIds.contains(candidateId)) {
+            throw new UnknownCandidateException();
+        }
+
         Set<VotingRequest> votingRequestSet = votingMap.get(candidateId);
         if (votingRequestSet == null) {
             votingRequestSet = new HashSet<>();
@@ -63,6 +70,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
         candidates.forEach(item -> {
             votingResultsMap.put(item.getId(), 0L);
+            candidateIds.add(item.getId());
         });
     }
 }
