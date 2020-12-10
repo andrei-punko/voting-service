@@ -1,0 +1,93 @@
+package com.example.votingservice.controllers;
+
+import com.example.votingservice.dto.request.VotingRequest;
+import com.example.votingservice.dto.response.CandidateItem;
+import com.example.votingservice.dto.response.CandidatesResponse;
+import com.example.votingservice.dto.response.VotingsResponse;
+import com.example.votingservice.services.VotingService;
+import com.example.votingservice.util.TestUtil;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(VotingController.class)
+class VotingControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private VotingService votingService;
+
+    @Test
+    void getCandidates() throws Exception {
+        final CandidatesResponse response = buildCandidatesResponse();
+        given(votingService.getCandidates()).willReturn(response);
+
+        mockMvc.perform(get("/candidates")
+                .characterEncoding("UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(TestUtil.asJsonString(response)));
+
+        verify(votingService).getCandidates();
+    }
+
+    private VotingsResponse buildVotingResponse() {
+        return new VotingsResponse(
+                new HashMap<String, Long>() {{
+                    put("Candidate 54", 3L);
+                }}
+        );
+    }
+
+    @Test
+    void makeVote() throws Exception {
+        final String candidateId = "Candidate 45";
+        final VotingRequest votingRequest = new VotingRequest("Andrei", "P12345WE789");
+
+        mockMvc.perform(post("/votings/" + candidateId)
+                .content(TestUtil.asJsonString(votingRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"))
+                .andDo(print())
+                .andExpect(status().isCreated());
+
+        verify(votingService).makeVote(candidateId, votingRequest);
+    }
+
+    @Test
+    void getVotingResults() throws Exception {
+        final VotingsResponse response = buildVotingResponse();
+        given(votingService.getVotingResults()).willReturn(response);
+
+        mockMvc.perform(get("/votings")
+                .characterEncoding("UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(TestUtil.asJsonString(response)));
+
+        verify(votingService).getVotingResults();
+    }
+
+    private CandidatesResponse buildCandidatesResponse() {
+        return new CandidatesResponse(Arrays.asList(new CandidateItem("123qwe", "Andrei")));
+    }
+}

@@ -16,17 +16,19 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 @Service
-public class VotingService implements InitializingBean {
+public class VotingService implements InitializingBean, IVotingService {
 
     private List<CandidateItem> candidates;
 
     private Map<String, Set<VotingRequest>> votingMap = new HashMap<>();
     private Map<String, Long> votingResultsMap = new HashMap<>();
 
+    @Override
     public CandidatesResponse getCandidates() {
         return new CandidatesResponse(candidates);
     }
 
+    @Override
     public void makeVote(String candidateId, VotingRequest votingRequest) {
         Set<VotingRequest> votingRequestSet = votingMap.get(candidateId);
         if (votingRequestSet == null) {
@@ -41,6 +43,7 @@ public class VotingService implements InitializingBean {
         votingResultsMap.merge(candidateId, 0L, (oldValue, newValue) -> oldValue + 1);
     }
 
+    @Override
     public VotingsResponse getVotingResults() {
         return new VotingsResponse(votingResultsMap);
     }
