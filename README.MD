@@ -32,8 +32,17 @@ http://localhost:8090/swagger-ui.html
 - Make vote:
 `curl -X POST http://localhost:8090/votings/3434 -H "Content-Type: application/json" -d "{ \"name\": \"Andrei\", \"passportId\": \"MP345353634543\"}"`
 
-## How to run Spock functional tests
+## How to run Spock functional tests:
     cd func-tests
     ./gradlew clean build
 
 Check tests report at `./func-tests/build/spock-reports/index.html`
+
+## How to run k6 performance tests:
+Install k6 according to [manual](https://k6.io/docs/getting-started/installation).
+
+Use next commands:
+```
+cd load-tests
+k6 run script.js
+```
