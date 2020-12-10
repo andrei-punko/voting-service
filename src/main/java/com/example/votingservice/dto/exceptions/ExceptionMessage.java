@@ -1,4 +1,4 @@
-package com.example.votingservice.exceptions;
+package com.example.votingservice.dto.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -4,21 +4,18 @@ import com.example.votingservice.dto.request.VotingRequest;
 import com.example.votingservice.dto.response.CandidateItem;
 import com.example.votingservice.dto.response.CandidatesResponse;
 import com.example.votingservice.dto.response.VotingsResponse;
-import com.example.votingservice.services.VotingService;
+import com.example.votingservice.services.impl.VotingService;
 import com.example.votingservice.util.TestUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -41,8 +38,7 @@ class VotingControllerTest {
         final CandidatesResponse response = buildCandidatesResponse();
         given(votingService.getCandidates()).willReturn(response);
 
-        mockMvc.perform(get("/candidates")
-                .characterEncoding("UTF-8"))
+        mockMvc.perform(get("/candidates"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(TestUtil.asJsonString(response)));
@@ -78,8 +74,7 @@ class VotingControllerTest {
         final VotingsResponse response = buildVotingResponse();
         given(votingService.getVotingResults()).willReturn(response);
 
-        mockMvc.perform(get("/votings")
-                .characterEncoding("UTF-8"))
+        mockMvc.perform(get("/votings"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(TestUtil.asJsonString(response)));

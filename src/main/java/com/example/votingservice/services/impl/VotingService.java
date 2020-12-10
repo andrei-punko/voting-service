@@ -1,17 +1,20 @@
-package com.example.votingservice.services;
+package com.example.votingservice.services.impl;
 
 import com.example.votingservice.dto.request.VotingRequest;
 import com.example.votingservice.dto.response.CandidateItem;
 import com.example.votingservice.dto.response.CandidatesResponse;
 import com.example.votingservice.dto.response.VotingsResponse;
 import com.example.votingservice.exceptions.DoubleVoteException;
+import com.example.votingservice.services.IVotingService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
@@ -48,12 +51,15 @@ public class VotingService implements InitializingBean, IVotingService {
         return new VotingsResponse(votingResultsMap);
     }
 
+    /**
+     * Load candidates from json file during service start
+     */
     @Override
     public void afterPropertiesSet() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         candidates = mapper.readValue(this.getClass().getClassLoader().getResourceAsStream("data/candidates.json"),
-            new TypeReference<List<CandidateItem>>() {
-            });
+                new TypeReference<List<CandidateItem>>() {
+                });
 
         candidates.forEach(item -> {
             votingResultsMap.put(item.getId(), 0L);

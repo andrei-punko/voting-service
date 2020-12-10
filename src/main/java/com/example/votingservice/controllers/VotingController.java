@@ -3,7 +3,7 @@ package com.example.votingservice.controllers;
 import com.example.votingservice.dto.request.VotingRequest;
 import com.example.votingservice.dto.response.CandidatesResponse;
 import com.example.votingservice.dto.response.VotingsResponse;
-import com.example.votingservice.services.VotingService;
+import com.example.votingservice.services.impl.VotingService;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

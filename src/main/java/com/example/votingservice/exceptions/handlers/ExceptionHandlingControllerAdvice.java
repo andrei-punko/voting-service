@@ -1,7 +1,7 @@
-package com.example.votingservice.handlers;
+package com.example.votingservice.exceptions.handlers;
 
 import com.example.votingservice.exceptions.DoubleVoteException;
-import com.example.votingservice.exceptions.ExceptionMessage;
+import com.example.votingservice.dto.exceptions.ExceptionMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
