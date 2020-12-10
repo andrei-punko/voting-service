@@ -34,15 +34,15 @@ class VotingServiceTest {
     void getCandidatesContent() {
         Set<CandidateItem> result = new HashSet<>(votingService.getCandidates().getCandidates());
 
-        checkCandidateExistence(result, new CandidateItem("3434", "Candidate A"));
-        checkCandidateExistence(result, new CandidateItem("54654", "Candidate B"));
-        checkCandidateExistence(result, new CandidateItem("4565", "Candidate C"));
+        checkCandidateExistence(result, new CandidateItem("3434", "Test Candidate A"));
+        checkCandidateExistence(result, new CandidateItem("54654", "Test Candidate B"));
+        checkCandidateExistence(result, new CandidateItem("4565", "Test Candidate C"));
     }
 
     @Test
     void getCandidatesCheckByName() {
         List<CandidateItem> candidates = votingService.getCandidates().getCandidates();
-        String[] expectedNames = {"Candidate A", "Candidate B", "Candidate C"};
+        String[] expectedNames = {"Test Candidate A", "Test Candidate B", "Test Candidate C"};
 
         Set<String> names = candidates.stream().map(CandidateItem::getName).collect(Collectors.toSet());
         for (String name : expectedNames) {
