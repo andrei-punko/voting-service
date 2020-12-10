@@ -4,6 +4,7 @@ import groovyx.net.http.HttpResponseException
 import org.apache.commons.io.IOUtils
 import spock.lang.Specification
 
+import static by.andd3dfx.configs.Configuration.expectedCandidates
 import static by.andd3dfx.configs.Configuration.votingServiceRestClient
 
 class VotingSpec extends Specification {
@@ -22,14 +23,10 @@ class VotingSpec extends Specification {
         candidates.size == 4
 
         and: 'Candidates should be from predefined list'
-        candidates[0].id == '54654'
-        candidates[0].name == 'Candidate B'
-        candidates[1].id == '3434'
-        candidates[1].name == 'Candidate A'
-        candidates[2].id == '4565'
-        candidates[2].name == 'Candidate C'
-        candidates[3].id == '787878'
-        candidates[3].name == 'Candidate D'
+        for (int i = 0; i < candidates.size; i++) {
+            candidates[i].id == expectedCandidates[i].id
+            candidates[i].name == expectedCandidates[i].name
+        }
     }
 
     def 'Make vote'() {
@@ -57,16 +54,16 @@ class VotingSpec extends Specification {
     }
 
     def 'Get votings'() {
-        when:
+        when: 'Get votings'
         def response = votingServiceRestClient.get(
                 path: '/votings'
         )
 
         then: 'Response status should be 200'
         response.status == 200
-        def votings = response.responseData.votings
 
         and: 'Voting map should have 4 records'
+        def votings = response.responseData.votings
         votings.size() == 4
 
         and: 'Voting map should have expected set of values'
@@ -89,11 +86,12 @@ class VotingSpec extends Specification {
         then: 'Response status should be 400'
         def error = thrown(HttpResponseException)
         error.statusCode == 400
+
         and: 'Message about double vote should be in response'
         IOUtils.toString(error.response.responseData) == '{"error":"User already voted!"}'
 
         where:
-        candidateId | name       | passportId
-        54654       | 'Andrei'   | '12345MW12'
+        candidateId | name     | passportId
+        54654       | 'Andrei' | '12345MW12'
     }
 }
