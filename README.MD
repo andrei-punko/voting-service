@@ -1,5 +1,6 @@
 
 # Voting REST service test task
+![Java CI with Maven](https://github.com/andrei-punko/voting-service/workflows/Java%20CI%20with%20Maven/badge.svg)
 
 ## Implement Voting REST service with next operations:
 
