@@ -1,6 +1,8 @@
 
 # Voting REST service test task
 ![Java CI with Maven](https://github.com/andrei-punko/voting-service/workflows/Java%20CI%20with%20Maven/badge.svg)
+[![Coverage](.github/badges/jacoco.svg)](https://github.com/andrei-punko/voting-service/actions/workflows/maven.yml)
+[![Branches](.github/badges/branches.svg)](https://github.com/andrei-punko/voting-service/actions/workflows/maven.yml)
 
 ## Implement Voting REST service with next operations:
 
