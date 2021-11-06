@@ -110,8 +110,8 @@
 				</executions>
 				<configuration>
 					<excludes>
-						<exclude>**/config/*</exclude>
-						<exclude>**/dto/*</exclude>
+						<exclude>**/config/**</exclude>
+						<exclude>**/dto/**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
