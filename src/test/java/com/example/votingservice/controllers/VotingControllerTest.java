@@ -82,7 +82,7 @@ class VotingControllerTest {
         verify(votingService).getVotingResults();
     }
 
-    private CandidatesResponse buildCandidatesResponse() {
+    static CandidatesResponse buildCandidatesResponse() {
         return new CandidatesResponse(Arrays.asList(new CandidateItem("123qwe", "Andrei")));
     }
 }

@@ -65,7 +65,7 @@ public class VotingService implements InitializingBean, IVotingService {
     public void afterPropertiesSet() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         candidates = mapper.readValue(this.getClass().getClassLoader().getResourceAsStream("data/candidates.json"),
-                new TypeReference<List<CandidateItem>>() {
+                new TypeReference<>() {
                 });
 
         candidates.forEach(item -> {
