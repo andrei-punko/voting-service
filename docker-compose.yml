@@ -1,10 +1,13 @@
 version: "3"
+
 services:
-  backend-template-app:
-    image: voting-service-app:latest
-    network_mode: bridge
-    container_name: voting-service-app
-    expose:
-      - 8090
+  voting-app:
+    build: ./
+    restart: always
     ports:
-      - 8090:8090
+      - "8090:8090"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
