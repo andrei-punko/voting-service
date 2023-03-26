@@ -6,7 +6,7 @@
 
 ## Prerequisites
 - Maven 3
-- JDK 11
+- JDK 17
 - K6 (install according to [manual](https://k6.io/docs/getting-started/installation))
 
 ## Implement Voting REST service with next operations
