@@ -20,10 +20,10 @@ class VotingSpec extends Specification {
 
         and: 'Candidates list should contain 4 records'
         def candidates = response.responseData.candidates
-        candidates.size == 4
+        candidates.size() == 4
 
         and: 'Candidates should be from predefined list'
-        for (int i = 0; i < candidates.size; i++) {
+        for (int i = 0; i < candidates.size(); i++) {
             candidates[i].id == expectedCandidates[i].id
             candidates[i].name == expectedCandidates[i].name
         }
