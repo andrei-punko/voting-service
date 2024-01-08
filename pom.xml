@@ -16,6 +16,9 @@
 	<description>Test task with Voting service based on Spring Boot</description>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
 		<java.version>17</java.version>
 		<lombok.version>1.18.22</lombok.version>
 		<swagger.version>2.9.2</swagger.version>
