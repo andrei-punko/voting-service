@@ -2,17 +2,19 @@ package by.andd3dfx.voting.controllers;
 
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
 import by.andd3dfx.voting.services.impl.VotingService;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ForkJoinPool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
+
+/**
+ * Example of controller with usage of async operations
+ */
 @Slf4j
-@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class AsyncVotingController {
@@ -26,7 +28,6 @@ public class AsyncVotingController {
         var completableFuture = CompletableFuture.supplyAsync(votingService::getCandidates);
 
         log.info("Servlet thread released");
-
         return completableFuture;
     }
 
@@ -40,7 +41,6 @@ public class AsyncVotingController {
         );
 
         log.info("Servlet thread released");
-
         return deferredResult;
     }
 }
