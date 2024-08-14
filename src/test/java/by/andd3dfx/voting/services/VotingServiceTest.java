@@ -5,6 +5,7 @@ import by.andd3dfx.voting.dto.response.CandidateItem;
 import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.exceptions.UnknownCandidateException;
 import by.andd3dfx.voting.services.impl.VotingService;
+import by.andd3dfx.voting.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ class VotingServiceTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        votingService = new VotingService();
+        votingService = new VotingService(TestUtil.getMapper());
         votingService.afterPropertiesSet();
     }
 

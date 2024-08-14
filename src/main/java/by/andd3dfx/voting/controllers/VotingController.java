@@ -3,6 +3,7 @@ package by.andd3dfx.voting.controllers;
 import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
+import by.andd3dfx.voting.services.IVotingService;
 import by.andd3dfx.voting.services.impl.VotingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ import javax.validation.constraints.NotNull;
 @RequiredArgsConstructor
 public class VotingController {
 
-    private final VotingService votingService;
+    private final IVotingService votingService;
 
     @GetMapping("/candidates")
     public CandidatesResponse getCandidates() {

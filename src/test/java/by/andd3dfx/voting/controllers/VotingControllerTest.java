@@ -13,10 +13,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static by.andd3dfx.voting.util.TestUtil.asJson;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,16 +42,14 @@ class VotingControllerTest {
         mockMvc.perform(get("/candidates"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(TestUtil.asJsonString(response)));
+                .andExpect(content().json(asJson(response)));
 
         verify(votingService).getCandidates();
     }
 
-    private VotingsResponse buildVotingResponse() {
-        return new VotingsResponse(
-                new HashMap<>() {{
-                    put("Candidate 54", 3L);
-                }}
+    private CandidatesResponse buildCandidatesResponse() {
+        return new CandidatesResponse(
+                List.of(new CandidateItem("123qwe", "Andrei"))
         );
     }
 
@@ -61,7 +59,7 @@ class VotingControllerTest {
         final VotingRequest votingRequest = new VotingRequest("Andrei", "P12345WE789");
 
         mockMvc.perform(post("/votings/{candidateId}", candidateId)
-                .content(TestUtil.asJsonString(votingRequest))
+                .content(asJson(votingRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8"))
                 .andDo(print())
@@ -78,12 +76,16 @@ class VotingControllerTest {
         mockMvc.perform(get("/votings"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(TestUtil.asJsonString(response)));
+                .andExpect(content().json(asJson(response)));
 
         verify(votingService).getVotingResults();
     }
 
-    private CandidatesResponse buildCandidatesResponse() {
-        return new CandidatesResponse(List.of(new CandidateItem("123qwe", "Andrei")));
+    private VotingsResponse buildVotingResponse() {
+        return new VotingsResponse(
+                new HashMap<>() {{
+                    put("Candidate 54", 3L);
+                }}
+        );
     }
 }

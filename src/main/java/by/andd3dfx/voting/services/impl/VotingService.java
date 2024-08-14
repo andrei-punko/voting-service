@@ -9,6 +9,9 @@ import by.andd3dfx.voting.exceptions.UnknownCandidateException;
 import by.andd3dfx.voting.services.IVotingService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,21 +19,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Service;
-
 @Service
+@RequiredArgsConstructor
 public class VotingService implements InitializingBean, IVotingService {
 
-    private List<CandidateItem> candidates;
+    private final ObjectMapper mapper;
 
+    private static final String DATA_CANDIDATES_JSON = "data/candidates.json";
+
+    private List<CandidateItem> candidates;
     private Map<String, Set<VotingRequest>> votingMap = new HashMap<>();
     private Map<String, Long> votingResultsMap = new HashMap<>();
     private Set<String> candidateIds = new HashSet<>();
 
     @Override
     public CandidatesResponse getCandidates() {
-        return new CandidatesResponse(candidates);
+        return new CandidatesResponse(List.copyOf(candidates));
     }
 
     @Override
@@ -39,13 +43,9 @@ public class VotingService implements InitializingBean, IVotingService {
             throw new UnknownCandidateException();
         }
 
-        Set<VotingRequest> votingRequestSet = votingMap.get(candidateId);
-        if (votingRequestSet == null) {
-            votingRequestSet = new HashSet<>();
-            votingMap.put(candidateId, votingRequestSet);
-        }
+        Set<VotingRequest> votingRequestsSet = votingMap.computeIfAbsent(candidateId, k -> new HashSet<>());
 
-        if (!votingRequestSet.add(votingRequest)) {
+        if (!votingRequestsSet.add(votingRequest)) {
             throw new DoubleVoteException();
         }
 
@@ -54,7 +54,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public VotingsResponse getVotingResults() {
-        return new VotingsResponse(votingResultsMap);
+        return new VotingsResponse(Map.copyOf(votingResultsMap));
     }
 
     /**
@@ -62,8 +62,7 @@ public class VotingService implements InitializingBean, IVotingService {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        candidates = mapper.readValue(this.getClass().getClassLoader().getResourceAsStream("data/candidates.json"),
+        candidates = mapper.readValue(this.getClass().getClassLoader().getResourceAsStream(DATA_CANDIDATES_JSON),
                 new TypeReference<>() {
                 });
 
