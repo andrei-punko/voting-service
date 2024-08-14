@@ -8,8 +8,7 @@ public class TestUtil {
 
     public static String asJsonString(Object obj) {
         try {
-            final String jsonContent = mapper.writeValueAsString(obj);
-            return jsonContent;
+            return mapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

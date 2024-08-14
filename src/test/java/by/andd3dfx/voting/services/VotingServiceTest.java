@@ -8,12 +8,10 @@ import by.andd3dfx.voting.services.impl.VotingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -29,34 +27,16 @@ class VotingServiceTest {
     }
 
     @Test
-    void getCandidatesAmount() {
-        List<CandidateItem> result = votingService.getCandidates().getCandidates();
+    void getCandidates() {
+        var response = votingService.getCandidates();
 
-        assertThat("Wrong items amount", result.size(), is(3));
-    }
-
-    @Test
-    void getCandidatesContent() {
-        Set<CandidateItem> result = new HashSet<>(votingService.getCandidates().getCandidates());
-
-        checkCandidateExistence(result, new CandidateItem("3434", "Test Candidate A"));
-        checkCandidateExistence(result, new CandidateItem("54654", "Test Candidate B"));
-        checkCandidateExistence(result, new CandidateItem("4565", "Test Candidate C"));
-    }
-
-    @Test
-    void getCandidatesCheckByName() {
-        List<CandidateItem> candidates = votingService.getCandidates().getCandidates();
-        String[] expectedNames = {"Test Candidate A", "Test Candidate B", "Test Candidate C"};
-
-        Set<String> names = candidates.stream().map(CandidateItem::getName).collect(Collectors.toSet());
-        for (String name : expectedNames) {
-            assertThat(String.format("Name %s is absent", name), names.contains(name), is(true));
-        }
-    }
-
-    private void checkCandidateExistence(Set<CandidateItem> result, CandidateItem candidate) {
-        assertThat(result.contains(candidate), is(true));
+        var candidates = Set.copyOf(response.getCandidates());
+        assertThat("Wrong items amount", candidates.size(), is(3));
+        assertThat(candidates, hasItems(
+                new CandidateItem("3434", "Test Candidate A"),
+                new CandidateItem("54654", "Test Candidate B"),
+                new CandidateItem("4565", "Test Candidate C")
+        ));
     }
 
     @Test
@@ -80,7 +60,7 @@ class VotingServiceTest {
     }
 
     @Test
-    public void tryDoubleVote() {
+    public void makeVoteTryingDoubleVote() {
         votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
         try {
             votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
@@ -91,7 +71,7 @@ class VotingServiceTest {
     }
 
     @Test
-    void getVotingResultsAfterVoting() {
+    void makeVoteAndGetVotingResults() {
         votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
         votingService.makeVote("4565", new VotingRequest("Sergei", "322893"));
         votingService.makeVote("4565", new VotingRequest("Andrei", "322894"));
