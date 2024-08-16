@@ -1,13 +1,11 @@
 package by.andd3dfx.voting.exceptions.handlers;
 
+import by.andd3dfx.voting.dto.exceptions.ExceptionMessage;
 import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.exceptions.UnknownCandidateException;
-import by.andd3dfx.voting.dto.exceptions.ExceptionMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

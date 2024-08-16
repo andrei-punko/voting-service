@@ -6,7 +6,6 @@ import by.andd3dfx.voting.dto.response.CandidatesResponse;
 import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
 import by.andd3dfx.voting.services.impl.VotingService;
-import by.andd3dfx.voting.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

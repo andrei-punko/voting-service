@@ -3,7 +3,6 @@ package by.andd3dfx.voting.exceptions.handlers;
 import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.exceptions.UnknownCandidateException;
 import by.andd3dfx.voting.util.TestUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ class ExceptionHandlingControllerAdviceTest {
 
     @Test
     void doubleVoteException() {
-        DoubleVoteException doubleVoteException = new DoubleVoteException();
+        var doubleVoteException = new DoubleVoteException();
 
         ResponseEntity<String> result = exceptionHandlingControllerAdvice.doubleVoteException(doubleVoteException);
 
@@ -33,7 +32,7 @@ class ExceptionHandlingControllerAdviceTest {
 
     @Test
     void unknownCandidateException() {
-        UnknownCandidateException unknownCandidateException = new UnknownCandidateException();
+        var unknownCandidateException = new UnknownCandidateException("777");
 
         ResponseEntity<String> result = exceptionHandlingControllerAdvice.unknownCandidateException(unknownCandidateException);
 

@@ -42,7 +42,7 @@ public class VotingService implements InitializingBean, IVotingService {
     @Override
     public void makeVote(String candidateId, VotingRequest votingRequest) {
         if (!candidateIds.contains(candidateId)) {
-            throw new UnknownCandidateException();
+            throw new UnknownCandidateException(candidateId);
         }
 
         Set<VotingRequest> votingRequestsSet = votingMap.computeIfAbsent(candidateId, k -> new HashSet<>());
@@ -61,6 +61,10 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public VotingResponse getVotingResult(@NotNull String candidateId) {
+        if (!candidateIds.contains(candidateId)) {
+            throw new UnknownCandidateException(candidateId);
+        }
+
         return new VotingResponse(candidateId, votingResults.get(candidateId));
     }
 

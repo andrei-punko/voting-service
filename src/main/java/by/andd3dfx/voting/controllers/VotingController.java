@@ -5,7 +5,6 @@ import by.andd3dfx.voting.dto.response.CandidatesResponse;
 import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
 import by.andd3dfx.voting.services.IVotingService;
-import by.andd3dfx.voting.services.impl.VotingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
