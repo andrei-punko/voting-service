@@ -1,10 +1,10 @@
-package by.andd3dfx.voting.services;
+package by.andd3dfx.voting.services.impl;
 
 import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidateItem;
+import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.exceptions.UnknownCandidateException;
-import by.andd3dfx.voting.services.impl.VotingService;
 import by.andd3dfx.voting.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +48,17 @@ class VotingServiceTest {
         assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(0L));
         assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0L));
         assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(0L));
+    }
+
+    @Test
+    void getVotingResult() {
+        votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
+        votingService.makeVote("4565", new VotingRequest("Sergei", "322893"));
+        votingService.makeVote("4565", new VotingRequest("Andrei", "322894"));
+
+        assertThat(votingService.getVotingResult("54654"), is(new VotingResponse("54654", 1L)));
+        assertThat(votingService.getVotingResult("3434"), is(new VotingResponse("3434", 0L)));
+        assertThat(votingService.getVotingResult("4565"), is(new VotingResponse("4565", 2L)));
     }
 
     @Test

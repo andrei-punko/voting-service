@@ -3,6 +3,7 @@ package by.andd3dfx.voting.services.impl;
 import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidateItem;
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
+import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
 import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.exceptions.UnknownCandidateException;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +31,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
     private List<CandidateItem> candidates;
     private Map<String, Set<VotingRequest>> votingMap = new HashMap<>();
-    private Map<String, Long> votingResultsMap = new HashMap<>();
+    private Map<String, Long> votingResults = new HashMap<>();
     private Set<String> candidateIds = new HashSet<>();
 
     @Override
@@ -49,12 +51,17 @@ public class VotingService implements InitializingBean, IVotingService {
             throw new DoubleVoteException();
         }
 
-        votingResultsMap.merge(candidateId, 0L, (oldValue, newValue) -> oldValue + 1);
+        votingResults.merge(candidateId, 0L, (oldValue, newValue) -> oldValue + 1);
     }
 
     @Override
     public VotingsResponse getVotingResults() {
-        return new VotingsResponse(Map.copyOf(votingResultsMap));
+        return new VotingsResponse(Map.copyOf(votingResults));
+    }
+
+    @Override
+    public VotingResponse getVotingResult(@NotNull String candidateId) {
+        return new VotingResponse(candidateId, votingResults.get(candidateId));
     }
 
     /**
@@ -66,9 +73,11 @@ public class VotingService implements InitializingBean, IVotingService {
                 new TypeReference<>() {
                 });
 
-        candidates.forEach(item -> {
-            votingResultsMap.put(item.getId(), 0L);
-            candidateIds.add(item.getId());
-        });
+        candidates.stream()
+                .map(CandidateItem::getId)
+                .forEach(id -> {
+                    votingResults.put(id, 0L);
+                    candidateIds.add(id);
+                });
     }
 }

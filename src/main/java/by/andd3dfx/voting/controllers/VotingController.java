@@ -2,6 +2,7 @@ package by.andd3dfx.voting.controllers;
 
 import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
+import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
 import by.andd3dfx.voting.services.IVotingService;
 import by.andd3dfx.voting.services.impl.VotingService;
@@ -36,5 +37,10 @@ public class VotingController {
     @GetMapping("/votings")
     public VotingsResponse getVotingResults() {
         return votingService.getVotingResults();
+    }
+
+    @GetMapping("/votings/{candidateId}")
+    public VotingResponse getVotingResult(@PathVariable @NotNull String candidateId) {
+        return votingService.getVotingResult(candidateId);
     }
 }

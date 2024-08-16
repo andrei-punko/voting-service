@@ -3,6 +3,7 @@ package by.andd3dfx.voting.controllers;
 import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidateItem;
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
+import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
 import by.andd3dfx.voting.services.impl.VotingService;
 import by.andd3dfx.voting.util.TestUtil;
@@ -79,6 +80,20 @@ class VotingControllerTest {
                 .andExpect(content().json(asJson(response)));
 
         verify(votingService).getVotingResults();
+    }
+
+    @Test
+    void getVotingResult() throws Exception {
+        final String candidateId = "Candidate 45";
+        VotingResponse response = new VotingResponse(candidateId, 45L);
+        given(votingService.getVotingResult(candidateId)).willReturn(response);
+
+        mockMvc.perform(get("/votings/{candidateId}", candidateId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(asJson(response)));
+
+        verify(votingService).getVotingResult(candidateId);
     }
 
     private VotingsResponse buildVotingResponse() {
