@@ -33,7 +33,7 @@ class VotingSpec extends Specification {
         when: 'Make vote'
         def voteResponse = votingServiceRestClient.post(
                 path: '/votings/' + candidateId,
-                body: [name      : name,
+                body: [
                        passportId: passportId
                 ],
                 requestContentType: 'application/json'
@@ -43,14 +43,14 @@ class VotingSpec extends Specification {
         voteResponse.status == 201
 
         where:
-        candidateId | name       | passportId
-        54654       | 'Andrei'   | '12345MW12'
-        3434        | 'Olga'     | '12346MW32'
-        4565        | 'Aleksey'  | '12347MW14'
-        4565        | 'Ilya'     | '12348MW52'
-        787878      | 'Nina'     | '32345MW16'
-        787878      | 'Vladimir' | '72345MW72'
-        787878      | 'Vitaly'   | '71345MW72'
+        candidateId | passportId
+        1           | '12345MW12'
+        2           | '12346MW32'
+        3           | '12347MW14'
+        3           | '12348MW52'
+        4           | '32345MW16'
+        4           | '72345MW72'
+        4           | '71345MW72'
     }
 
     def 'Get votings'() {
@@ -67,17 +67,17 @@ class VotingSpec extends Specification {
         votings.size() == 4
 
         and: 'Voting map should have expected set of values'
-        votings['54654'] == 1
-        votings['3434'] == 1
-        votings['4565'] == 2
-        votings['787878'] == 3
+        votings['1'] == 1
+        votings['2'] == 1
+        votings['3'] == 2
+        votings['4'] == 3
     }
 
     def 'Make double vote'() {
         when: 'Try to make double vote'
         votingServiceRestClient.post(
                 path: '/votings/' + candidateId,
-                body: [name      : name,
+                body: [
                        passportId: passportId
                 ],
                 requestContentType: 'application/json'
@@ -91,7 +91,7 @@ class VotingSpec extends Specification {
         IOUtils.toString(error.response.responseData) == '{"error":"User already voted!"}'
 
         where:
-        candidateId | name     | passportId
-        54654       | 'Andrei' | '12345MW12'
+        candidateId | passportId
+        1           | '12345MW12'
     }
 }
