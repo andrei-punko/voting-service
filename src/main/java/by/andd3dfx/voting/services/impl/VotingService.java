@@ -30,9 +30,8 @@ public class VotingService implements InitializingBean, IVotingService {
     private static final String DATA_CANDIDATES_JSON = "data/candidates.json";
 
     private List<CandidateItem> candidates;
-    private Map<String, Set<VotingRequest>> votingMap = new HashMap<>();
-    private Map<String, Long> votingResults = new HashMap<>();
-    private Set<String> candidateIds = new HashSet<>();
+    private final Map<String, Set<String>> votingResults = new HashMap<>();
+    private final Set<String> votedPassportIds = new HashSet<>();
 
     @Override
     public CandidatesResponse getCandidates() {
@@ -41,17 +40,17 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public void makeVote(String candidateId, VotingRequest votingRequest) {
-        if (!candidateIds.contains(candidateId)) {
+        if (!votingResults.containsKey(candidateId)) {
             throw new UnknownCandidateException(candidateId);
         }
 
-        Set<VotingRequest> votingRequestsSet = votingMap.computeIfAbsent(candidateId, k -> new HashSet<>());
-
-        if (!votingRequestsSet.add(votingRequest)) {
+        var passportId = votingRequest.getPassportId();
+        if (votedPassportIds.contains(passportId)) {
             throw new DoubleVoteException();
         }
 
-        votingResults.merge(candidateId, 0L, (oldValue, newValue) -> oldValue + 1);
+        votingResults.get(candidateId).add(passportId);
+        votedPassportIds.add(passportId);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public VotingResponse getVotingResult(@NotNull String candidateId) {
-        if (!candidateIds.contains(candidateId)) {
+        if (!votingResults.containsKey(candidateId)) {
             throw new UnknownCandidateException(candidateId);
         }
 
@@ -69,7 +68,7 @@ public class VotingService implements InitializingBean, IVotingService {
     }
 
     /**
-     * Load candidates from json file during service start
+     * Load candidates from JSON file during service start
      */
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -77,11 +76,9 @@ public class VotingService implements InitializingBean, IVotingService {
                 new TypeReference<>() {
                 });
 
-        candidates.stream()
-                .map(CandidateItem::getId)
-                .forEach(id -> {
-                    votingResults.put(id, 0L);
-                    candidateIds.add(id);
-                });
+        for (var candidate : candidates) {
+            String id = candidate.getId();
+            votingResults.put(id, new HashSet<>());
+        }
     }
 }

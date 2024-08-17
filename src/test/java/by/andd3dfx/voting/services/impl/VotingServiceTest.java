@@ -9,12 +9,11 @@ import by.andd3dfx.voting.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class VotingServiceTest {
@@ -31,34 +30,54 @@ class VotingServiceTest {
     void getCandidates() {
         var response = votingService.getCandidates();
 
-        var candidates = Set.copyOf(response.getCandidates());
-        assertThat("Wrong items amount", candidates.size(), is(3));
-        assertThat(candidates, hasItems(
-                new CandidateItem("3434", "Test Candidate A"),
+        var candidates = response.getCandidates();
+        assertThat(candidates.size()).isEqualTo(3);
+        assertThat(candidates).isEqualTo(List.of(
                 new CandidateItem("54654", "Test Candidate B"),
+                new CandidateItem("3434", "Test Candidate A"),
                 new CandidateItem("4565", "Test Candidate C")
         ));
     }
 
     @Test
     void getVotingResults() {
-        Map<String, Long> votingResults = votingService.getVotingResults().getVotings();
+        var response = votingService.getVotingResults();
 
-        assertThat("Wrong votingResults amount", votingResults.size(), is(3));
-        assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(0L));
-        assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0L));
-        assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(0L));
+        assertThat(response.getVotings()).isEqualTo(buildEmptyVotingResult());
+    }
+
+    private static Map<String, Set<Object>> buildEmptyVotingResult() {
+        return Map.of(
+                "54654", Set.of(),
+                "3434", Set.of(),
+                "4565", Set.of()
+        );
     }
 
     @Test
-    void getVotingResult() {
-        votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
-        votingService.makeVote("4565", new VotingRequest("Sergei", "322893"));
-        votingService.makeVote("4565", new VotingRequest("Andrei", "322894"));
+    void makeVoteAndGetVotingResults() {
+        checkVotingResult("54654", Set.of());
+        checkVotingResult("3434", Set.of());
+        checkVotingResult("4565", Set.of());
+        assertThat(votingService.getVotingResults().getVotings()).isEqualTo(buildEmptyVotingResult());
 
-        assertThat(votingService.getVotingResult("54654"), is(new VotingResponse("54654", 1L)));
-        assertThat(votingService.getVotingResult("3434"), is(new VotingResponse("3434", 0L)));
-        assertThat(votingService.getVotingResult("4565"), is(new VotingResponse("4565", 2L)));
+        votingService.makeVote("54654", new VotingRequest("ABC1"));
+        votingService.makeVote("4565", new VotingRequest("ABC2"));
+        votingService.makeVote("4565", new VotingRequest("ABC3"));
+
+        checkVotingResult("54654", Set.of("ABC1"));
+        checkVotingResult("3434", Set.of());
+        checkVotingResult("4565", Set.of("ABC2", "ABC3"));
+        assertThat(votingService.getVotingResults().getVotings()).isEqualTo(Map.of(
+                "54654", Set.of("ABC1"),
+                "3434", Set.of(),
+                "4565", Set.of("ABC2", "ABC3")
+        ));
+    }
+
+    private void checkVotingResult(String candidateId, Set<String> passportIds) {
+        assertThat(votingService.getVotingResult(candidateId))
+                .isEqualTo(new VotingResponse(candidateId, passportIds));
     }
 
     @Test
@@ -68,7 +87,7 @@ class VotingServiceTest {
             votingService.getVotingResult(WRONG_CANDIDATE_ID);
             fail("UnknownCandidateException should be thrown!");
         } catch (UnknownCandidateException uce) {
-            assertThat(uce.getMessage(), is("Candidate id=%s is unknown".formatted(WRONG_CANDIDATE_ID)));
+            assertThat(uce.getMessage()).isEqualTo("Candidate id=%s is unknown".formatted(WRONG_CANDIDATE_ID));
         }
     }
 
@@ -76,33 +95,32 @@ class VotingServiceTest {
     public void makeVoteForUnknownCandidate() {
         final String WRONG_CANDIDATE_ID = "7856";
         try {
-            votingService.makeVote(WRONG_CANDIDATE_ID, new VotingRequest("Vasya", "322982"));
+            votingService.makeVote(WRONG_CANDIDATE_ID, new VotingRequest("322982"));
             fail("UnknownCandidateException should be thrown!");
         } catch (UnknownCandidateException uce) {
-            assertThat(uce.getMessage(), is("Candidate id=%s is unknown".formatted(WRONG_CANDIDATE_ID)));
+            assertThat(uce.getMessage()).isEqualTo("Candidate id=%s is unknown".formatted(WRONG_CANDIDATE_ID));
         }
     }
 
     @Test
-    public void makeVoteTryingDoubleVote() {
-        votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
+    public void makeVoteTryingDoubleVoteToOneCandidate() {
+        votingService.makeVote("54654", new VotingRequest("322982"));
         try {
-            votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
+            votingService.makeVote("54654", new VotingRequest("322982"));
             fail("DoubleVoteException should be thrown");
         } catch (DoubleVoteException uce) {
-            assertThat(uce.getMessage(), is("User already voted!"));
+            assertThat(uce.getMessage()).isEqualTo("User already voted!");
         }
     }
 
     @Test
-    void makeVoteAndGetVotingResults() {
-        votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
-        votingService.makeVote("4565", new VotingRequest("Sergei", "322893"));
-        votingService.makeVote("4565", new VotingRequest("Andrei", "322894"));
-
-        Map<String, Long> votingResults = votingService.getVotingResults().getVotings();
-        assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(1L));
-        assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0L));
-        assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(2L));
+    public void makeVoteTryingDoubleVoteToDifferentCandidates() {
+        votingService.makeVote("54654", new VotingRequest("322982"));
+        try {
+            votingService.makeVote("3434", new VotingRequest("322982"));
+            fail("DoubleVoteException should be thrown");
+        } catch (DoubleVoteException uce) {
+            assertThat(uce.getMessage()).isEqualTo("User already voted!");
+        }
     }
 }

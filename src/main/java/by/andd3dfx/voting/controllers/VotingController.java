@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @RestController
@@ -29,7 +30,7 @@ public class VotingController {
 
     @PostMapping("/votings/{candidateId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void makeVote(@PathVariable @NotNull String candidateId, @RequestBody VotingRequest votingRequest) {
+    public void makeVote(@PathVariable @NotNull String candidateId, @RequestBody @Valid VotingRequest votingRequest) {
         votingService.makeVote(candidateId, votingRequest);
     }
 

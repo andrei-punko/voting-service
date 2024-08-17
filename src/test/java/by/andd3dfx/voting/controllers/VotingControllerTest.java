@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import static by.andd3dfx.voting.util.TestUtil.asJson;
 import static org.mockito.BDDMockito.given;
@@ -56,12 +57,12 @@ class VotingControllerTest {
     @Test
     void makeVote() throws Exception {
         final String candidateId = "Candidate 45";
-        final VotingRequest votingRequest = new VotingRequest("Andrei", "P12345WE789");
+        var votingRequest = new VotingRequest("P12345WE789");
 
         mockMvc.perform(post("/votings/{candidateId}", candidateId)
-                .content(asJson(votingRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding("UTF-8"))
+                        .content(asJson(votingRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
@@ -69,8 +70,20 @@ class VotingControllerTest {
     }
 
     @Test
+    void makeVoteWhenPasswordIdNotPopulated() throws Exception {
+        var votingRequest = new VotingRequest(null);
+
+        mockMvc.perform(post("/votings/{candidateId}", "Candidate 45")
+                        .content(asJson(votingRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void getVotingResults() throws Exception {
-        final VotingsResponse response = buildVotingResponse();
+        var response = buildVotingResponse();
         given(votingService.getVotingResults()).willReturn(response);
 
         mockMvc.perform(get("/votings"))
@@ -84,7 +97,7 @@ class VotingControllerTest {
     @Test
     void getVotingResult() throws Exception {
         final String candidateId = "Candidate 45";
-        VotingResponse response = new VotingResponse(candidateId, 45L);
+        var response = new VotingResponse(candidateId, Set.of());
         given(votingService.getVotingResult(candidateId)).willReturn(response);
 
         mockMvc.perform(get("/votings/{candidateId}", candidateId))
@@ -98,7 +111,7 @@ class VotingControllerTest {
     private VotingsResponse buildVotingResponse() {
         return new VotingsResponse(
                 new HashMap<>() {{
-                    put("Candidate 54", 3L);
+                    put("Candidate 54", Set.of());
                 }}
         );
     }
