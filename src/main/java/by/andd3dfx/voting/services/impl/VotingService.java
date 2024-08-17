@@ -15,10 +15,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,10 +28,9 @@ public class VotingService implements InitializingBean, IVotingService {
     private final ObjectMapper mapper;
 
     private List<CandidateItem> candidates;
-
-    private Map<String, Set<VotingRequest>> votingMap = new HashMap<>();
-    private Map<String, Long> votingResultsMap = new HashMap<>();
-    private Set<String> candidateIds = new HashSet<>();
+    private final Set<String> candidateIds = new HashSet<>();
+    private final Map<String, Set<VotingRequest>> votingResults = new ConcurrentHashMap<>();
+    private final Map<String, Long> votingResultsMap = new HashMap<>();
 
     @Override
     public CandidatesResponse getCandidates() {
@@ -44,10 +43,10 @@ public class VotingService implements InitializingBean, IVotingService {
             throw new UnknownCandidateException();
         }
 
-        Set<VotingRequest> votingRequestSet = votingMap.get(candidateId);
+        Set<VotingRequest> votingRequestSet = votingResults.get(candidateId);
         if (votingRequestSet == null) {
             votingRequestSet = new HashSet<>();
-            votingMap.put(candidateId, votingRequestSet);
+            votingResults.put(candidateId, votingRequestSet);
         }
 
         if (!votingRequestSet.add(votingRequest)) {

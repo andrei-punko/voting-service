@@ -73,7 +73,7 @@ class VotingServiceTest {
     @Test
     public void makeVoteForUnknownCandidate() {
         try {
-            votingService.makeVote("bla-bla", new VotingRequest("Vasya", "322982"));
+            votingService.makeVote("bla-bla", new VotingRequest("322982"));
             fail("UnknownCandidateException should be thrown");
         } catch (UnknownCandidateException uce) {
             assertThat(uce.getMessage(), is("Unknown candidate id!"));
@@ -82,9 +82,9 @@ class VotingServiceTest {
 
     @Test
     public void tryDoubleVote() {
-        votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
+        votingService.makeVote("54654", new VotingRequest("322982"));
         try {
-            votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
+            votingService.makeVote("54654", new VotingRequest("322982"));
             fail("DoubleVoteException should be thrown");
         } catch (DoubleVoteException uce) {
             assertThat(uce.getMessage(), is("User already voted!"));
@@ -93,9 +93,9 @@ class VotingServiceTest {
 
     @Test
     void getVotingResultsAfterVoting() {
-        votingService.makeVote("54654", new VotingRequest("Vasya", "322982"));
-        votingService.makeVote("4565", new VotingRequest("Sergei", "322893"));
-        votingService.makeVote("4565", new VotingRequest("Andrei", "322894"));
+        votingService.makeVote("54654", new VotingRequest("322982"));
+        votingService.makeVote("4565", new VotingRequest("322893"));
+        votingService.makeVote("4565", new VotingRequest("322894"));
 
         Map<String, Long> votingResults = votingService.getVotingResults().getVotings();
         assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(1L));

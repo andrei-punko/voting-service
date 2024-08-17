@@ -15,8 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -48,7 +50,7 @@ class VotingControllerTest {
 
     private VotingsResponse buildVotingResponse() {
         return new VotingsResponse(
-                new HashMap<String, Long>() {{
+                new HashMap<>() {{
                     put("Candidate 54", 3L);
                 }}
         );
@@ -57,9 +59,9 @@ class VotingControllerTest {
     @Test
     void makeVote() throws Exception {
         final String candidateId = "Candidate 45";
-        final VotingRequest votingRequest = new VotingRequest("Andrei", "P12345WE789");
+        final VotingRequest votingRequest = new VotingRequest("P12345WE789");
 
-        mockMvc.perform(post("/votings/" + candidateId)
+        mockMvc.perform(post("/votings/{candidateId}", candidateId)
                 .content(TestUtil.asJsonString(votingRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8"))
@@ -98,6 +100,6 @@ class VotingControllerTest {
     }
 
     static CandidatesResponse buildCandidatesResponse() {
-        return new CandidatesResponse(Arrays.asList(new CandidateItem("123qwe", "Andrei")));
+        return new CandidatesResponse(List.of(new CandidateItem("123qwe", "Andrei")));
     }
 }

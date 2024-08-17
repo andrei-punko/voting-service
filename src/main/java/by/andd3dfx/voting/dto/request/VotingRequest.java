@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VotingRequest {
 
-    @NotNull(message = "Name should be populated")
-    private String name;
-
     @NotNull(message = "PassportId should be populated")
     private String passportId;
 }
