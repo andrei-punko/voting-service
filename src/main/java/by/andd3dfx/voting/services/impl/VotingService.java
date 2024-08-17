@@ -74,6 +74,12 @@ public class VotingService implements InitializingBean, IVotingService {
         return new VotingResponse(candidateId, votingResults.get(candidateId).size());
     }
 
+    @Override
+    public void deleteVotingResults() {
+        votingResults.values().forEach(Set::clear);
+        passportIds.clear();
+    }
+
     /**
      * Load candidates from JSON file during service start
      */

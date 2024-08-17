@@ -92,12 +92,9 @@ class VotingServiceTest {
         votingService.makeVote("4565", new VotingRequest("322893"));
         votingService.makeVote("4565", new VotingRequest("322894"));
 
-        assertThat(votingService.getVotingResult("54654"))
-                .isEqualTo(new VotingResponse("54654", 1));
-        assertThat(votingService.getVotingResult("4565"))
-                .isEqualTo(new VotingResponse("4565", 2));
-        assertThat(votingService.getVotingResult("3434"))
-                .isEqualTo(new VotingResponse("3434", 0));
+        checkVotesAmount("54654", 1);
+        checkVotesAmount("4565", 2);
+        checkVotesAmount("3434", 0);
     }
 
     @Test
@@ -109,5 +106,26 @@ class VotingServiceTest {
         } catch (UnknownCandidateException uce) {
             assertThat(uce.getMessage()).isEqualTo("Unknown candidate id=" + WRONG_CANDIDATE_ID);
         }
+    }
+
+    @Test
+    void deleteVotingResults() {
+        votingService.makeVote("54654", new VotingRequest("322982"));
+        votingService.makeVote("4565", new VotingRequest("322893"));
+        votingService.makeVote("4565", new VotingRequest("322894"));
+        checkVotesAmount("54654", 1);
+        checkVotesAmount("4565", 2);
+        checkVotesAmount("3434", 0);
+
+        votingService.deleteVotingResults();
+
+        checkVotesAmount("54654", 0);
+        checkVotesAmount("4565", 0);
+        checkVotesAmount("3434", 0);
+    }
+
+    private void checkVotesAmount(String candidateId, int expectedVotesAmount) {
+        assertThat(votingService.getVotingResult(candidateId))
+                .isEqualTo(new VotingResponse(candidateId, expectedVotesAmount));
     }
 }

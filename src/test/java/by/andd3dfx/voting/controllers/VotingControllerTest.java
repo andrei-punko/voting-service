@@ -22,6 +22,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -127,6 +128,15 @@ class VotingControllerTest {
                 .andExpect(content().json(TestUtil.asJsonString(response)));
 
         verify(votingService).getVotingResult(candidateId);
+    }
+
+    @Test
+    void deleteVotingResults() throws Exception {
+        mockMvc.perform(delete("/votings"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        verify(votingService).deleteVotingResults();
     }
 
     static CandidatesResponse buildCandidatesResponse() {
