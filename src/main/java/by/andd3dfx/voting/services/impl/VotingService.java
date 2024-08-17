@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VotingService implements InitializingBean, IVotingService {
 
+    private static final String DATA_CANDIDATES_JSON = "data/candidates.json";
+
     private final ObjectMapper mapper;
 
     private List<CandidateItem> candidates;
@@ -66,7 +68,7 @@ public class VotingService implements InitializingBean, IVotingService {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        candidates = mapper.readValue(this.getClass().getClassLoader().getResourceAsStream("data/candidates.json"),
+        candidates = mapper.readValue(this.getClass().getClassLoader().getResourceAsStream(DATA_CANDIDATES_JSON),
                 new TypeReference<>() {
                 });
 
