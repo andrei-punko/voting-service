@@ -42,7 +42,7 @@ public class VotingService implements InitializingBean, IVotingService {
     @Override
     public void makeVote(String candidateId, VotingRequest votingRequest) {
         if (!candidateIds.contains(candidateId)) {
-            throw new UnknownCandidateException();
+            throw new UnknownCandidateException(candidateId);
         }
 
         Set<VotingRequest> votingRequestSet = votingResults.get(candidateId);

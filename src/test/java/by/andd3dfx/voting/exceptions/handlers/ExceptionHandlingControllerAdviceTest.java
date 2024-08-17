@@ -32,7 +32,7 @@ class ExceptionHandlingControllerAdviceTest {
 
     @Test
     void unknownCandidateException() {
-        UnknownCandidateException unknownCandidateException = new UnknownCandidateException();
+        UnknownCandidateException unknownCandidateException = new UnknownCandidateException("123");
 
         ResponseEntity<String> result = exceptionHandlingControllerAdvice.unknownCandidateException(unknownCandidateException);
 

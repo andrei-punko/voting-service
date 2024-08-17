@@ -72,11 +72,12 @@ class VotingServiceTest {
 
     @Test
     public void makeVoteForUnknownCandidate() {
+        final String WRONG_CANDIDATE_ID = "568978";
         try {
-            votingService.makeVote("bla-bla", new VotingRequest("322982"));
+            votingService.makeVote(WRONG_CANDIDATE_ID, new VotingRequest("322982"));
             fail("UnknownCandidateException should be thrown");
         } catch (UnknownCandidateException uce) {
-            assertThat(uce.getMessage(), is("Unknown candidate id!"));
+            assertThat(uce.getMessage(), is("Unknown candidate id=" + WRONG_CANDIDATE_ID));
         }
     }
 
