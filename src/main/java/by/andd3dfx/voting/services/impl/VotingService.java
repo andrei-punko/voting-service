@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,8 +32,8 @@ public class VotingService implements InitializingBean, IVotingService {
 
     private List<CandidateItem> candidates;
     private final Set<String> candidateIds = new HashSet<>();
-    private final Map<String, Set<VotingRequest>> votingResults = new ConcurrentHashMap<>();
-    private final Map<String, Long> votingResultsMap = new HashMap<>();
+    private final Map<String, Set<String>> votingResults = new ConcurrentHashMap<>();
+    private final Set<String> passportIds = ConcurrentHashMap.newKeySet();
 
     @Override
     public CandidatesResponse getCandidates() {
@@ -45,22 +46,22 @@ public class VotingService implements InitializingBean, IVotingService {
             throw new UnknownCandidateException(candidateId);
         }
 
-        Set<VotingRequest> votingRequestSet = votingResults.get(candidateId);
-        if (votingRequestSet == null) {
-            votingRequestSet = new HashSet<>();
-            votingResults.put(candidateId, votingRequestSet);
-        }
-
-        if (!votingRequestSet.add(votingRequest)) {
+        var passportId = votingRequest.getPassportId();
+        if (passportIds.contains(passportId)) {
             throw new DoubleVoteException();
         }
 
-        votingResultsMap.merge(candidateId, 0L, (oldValue, newValue) -> oldValue + 1);
+        votingResults.get(candidateId).add(passportId);
+        passportIds.add(passportId);
     }
 
     @Override
     public VotingsResponse getVotingResults() {
-        return new VotingsResponse(Map.copyOf(votingResultsMap));
+        var map = votingResults.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> entry.getValue().size()
+                ));
+        return new VotingsResponse(map);
     }
 
     /**
@@ -72,9 +73,10 @@ public class VotingService implements InitializingBean, IVotingService {
                 new TypeReference<>() {
                 });
 
-        candidates.forEach(item -> {
-            votingResultsMap.put(item.getId(), 0L);
-            candidateIds.add(item.getId());
-        });
+        for (var candidate : candidates) {
+            var id = candidate.getId();
+            votingResults.put(id, new HashSet<>());
+            candidateIds.add(id);
+        }
     }
 }

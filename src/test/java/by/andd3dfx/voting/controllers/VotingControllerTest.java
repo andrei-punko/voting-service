@@ -4,6 +4,7 @@ import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidateItem;
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
+import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.services.impl.VotingService;
 import by.andd3dfx.voting.util.TestUtil;
 import org.junit.jupiter.api.Test;
@@ -13,11 +14,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,7 +52,7 @@ class VotingControllerTest {
     private VotingsResponse buildVotingResponse() {
         return new VotingsResponse(
                 new HashMap<>() {{
-                    put("Candidate 54", 3L);
+                    put("Candidate 54", 3);
                 }}
         );
     }
@@ -69,6 +70,20 @@ class VotingControllerTest {
                 .andExpect(status().isCreated());
 
         verify(votingService).makeVote(candidateId, votingRequest);
+    }
+
+    @Test
+    void makeDoubleVote() throws Exception {
+        final String candidateId = "Candidate 45";
+        final VotingRequest votingRequest = new VotingRequest("P12345WE789");
+        doThrow(new DoubleVoteException()).when(votingService).makeVote(candidateId, votingRequest);
+
+        mockMvc.perform(post("/votings/{candidateId}", candidateId)
+                        .content(TestUtil.asJsonString(votingRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test

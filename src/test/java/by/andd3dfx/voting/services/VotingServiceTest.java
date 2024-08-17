@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,12 +61,12 @@ class VotingServiceTest {
 
     @Test
     void getVotingResults() {
-        Map<String, Long> votingResults = votingService.getVotingResults().getVotings();
+        var votingResults = votingService.getVotingResults().getVotings();
 
         assertThat("Wrong votingResults amount", votingResults.size(), is(3));
-        assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(0L));
-        assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0L));
-        assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(0L));
+        assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(0));
+        assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0));
+        assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(0));
     }
 
     @Test
@@ -82,10 +81,21 @@ class VotingServiceTest {
     }
 
     @Test
-    public void tryDoubleVote() {
+    public void tryDoubleVoteSamePersonVotesForSameCandidate() {
         votingService.makeVote("54654", new VotingRequest("322982"));
         try {
             votingService.makeVote("54654", new VotingRequest("322982"));
+            fail("DoubleVoteException should be thrown");
+        } catch (DoubleVoteException uce) {
+            assertThat(uce.getMessage(), is("User already voted!"));
+        }
+    }
+
+    @Test
+    public void tryDoubleVoteSamePersonVotesForDifferentCandidates() {
+        votingService.makeVote("54654", new VotingRequest("322982"));
+        try {
+            votingService.makeVote("4565", new VotingRequest("322982"));
             fail("DoubleVoteException should be thrown");
         } catch (DoubleVoteException uce) {
             assertThat(uce.getMessage(), is("User already voted!"));
@@ -98,9 +108,9 @@ class VotingServiceTest {
         votingService.makeVote("4565", new VotingRequest("322893"));
         votingService.makeVote("4565", new VotingRequest("322894"));
 
-        Map<String, Long> votingResults = votingService.getVotingResults().getVotings();
-        assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(1L));
-        assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0L));
-        assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(2L));
+        var votingResults = votingService.getVotingResults().getVotings();
+        assertThat("Wrong votingResults[0].candidate", votingResults.get("54654"), is(1));
+        assertThat("Wrong votingResults[1].candidate", votingResults.get("3434"), is(0));
+        assertThat("Wrong votingResults[2].candidate", votingResults.get("4565"), is(2));
     }
 }

@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VotingsResponse {
 
-    private Map<String, Long> votings;
+    private Map<String, Integer> votings;
 }
