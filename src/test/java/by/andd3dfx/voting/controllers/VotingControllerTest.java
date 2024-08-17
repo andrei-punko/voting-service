@@ -70,6 +70,21 @@ class VotingControllerTest {
     }
 
     @Test
+    void makeVoteWhenPassportIdIsAbsent() throws Exception {
+        final String candidateId = "Candidate 45";
+        final VotingRequest votingRequest = new VotingRequest(null);
+
+        mockMvc.perform(post("/votings/{candidateId}", candidateId)
+                        .content(TestUtil.asJsonString(votingRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        verify(votingService, never()).makeVote(candidateId, votingRequest);
+    }
+
+    @Test
     void getVotingResults() throws Exception {
         final VotingsResponse response = buildVotingResponse();
         given(votingService.getVotingResults()).willReturn(response);
