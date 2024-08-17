@@ -35,7 +35,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public CandidatesResponse getCandidates() {
-        return new CandidatesResponse(candidates);
+        return new CandidatesResponse(List.copyOf(candidates));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public VotingsResponse getVotingResults() {
-        return new VotingsResponse(votingResultsMap);
+        return new VotingsResponse(Map.copyOf(votingResultsMap));
     }
 
     /**
