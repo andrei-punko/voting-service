@@ -16,11 +16,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class VotingService implements InitializingBean, IVotingService {
+
+    private final ObjectMapper mapper;
 
     private List<CandidateItem> candidates;
 
@@ -58,11 +63,10 @@ public class VotingService implements InitializingBean, IVotingService {
     }
 
     /**
-     * Load candidates from json file during service start
+     * Load candidates from JSON file during service start
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
         candidates = mapper.readValue(this.getClass().getClassLoader().getResourceAsStream("data/candidates.json"),
                 new TypeReference<>() {
                 });

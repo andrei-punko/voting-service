@@ -2,6 +2,7 @@ package by.andd3dfx.voting.exceptions.handlers;
 
 import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.exceptions.UnknownCandidateException;
+import by.andd3dfx.voting.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ class ExceptionHandlingControllerAdviceTest {
 
     @BeforeEach
     public void setup() {
-        exceptionHandlingControllerAdvice = new ExceptionHandlingControllerAdvice();
+        exceptionHandlingControllerAdvice = new ExceptionHandlingControllerAdvice(TestUtil.getMapper());
     }
 
     @Test
