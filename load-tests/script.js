@@ -44,13 +44,12 @@ export function get_votings() {
 
 export function make_vote() {
   if (__ENV.MYVAR != 'make_vote') fail();
-  const candidate_ids = ['54654', '3434', '4565', '787878'];
+  const candidate_ids = ['1', '2', '3', '4'];
   const candidate_id = candidate_ids[Math.floor(Math.random() * candidate_ids.length)];
 
   var url = 'http://localhost:8090/votings/' + candidate_id;
   var payload = JSON.stringify({
-    name: Math.random().toString(36).substring(8),
-    passportId: Math.random().toString(36).substring(8),
+    passportId: randomString(12),
   });
   var params = {
     headers: {
@@ -60,4 +59,13 @@ export function make_vote() {
 
   let res = http.post(url, payload, params);
   check(res, { 'status was 201': (r) => r.status == 201 });
+}
+
+function randomString(length) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
 }
