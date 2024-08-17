@@ -2,6 +2,7 @@ package by.andd3dfx.voting.services.impl;
 
 import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidateItem;
+import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.exceptions.UnknownCandidateException;
 import by.andd3dfx.voting.util.TestUtil;
@@ -83,5 +84,30 @@ class VotingServiceTest {
                 "3434", 0,
                 "4565", 2
         ));
+    }
+
+    @Test
+    void getVotingResult() {
+        votingService.makeVote("54654", new VotingRequest("322982"));
+        votingService.makeVote("4565", new VotingRequest("322893"));
+        votingService.makeVote("4565", new VotingRequest("322894"));
+
+        assertThat(votingService.getVotingResult("54654"))
+                .isEqualTo(new VotingResponse("54654", 1));
+        assertThat(votingService.getVotingResult("4565"))
+                .isEqualTo(new VotingResponse("4565", 2));
+        assertThat(votingService.getVotingResult("3434"))
+                .isEqualTo(new VotingResponse("3434", 0));
+    }
+
+    @Test
+    void getVotingResultForUnknownCandidate() {
+        final String WRONG_CANDIDATE_ID = "568978";
+        try {
+            votingService.getVotingResult(WRONG_CANDIDATE_ID);
+            fail("UnknownCandidateException should be thrown");
+        } catch (UnknownCandidateException uce) {
+            assertThat(uce.getMessage()).isEqualTo("Unknown candidate id=" + WRONG_CANDIDATE_ID);
+        }
     }
 }

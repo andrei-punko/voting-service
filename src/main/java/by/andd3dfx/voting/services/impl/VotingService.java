@@ -3,6 +3,7 @@ package by.andd3dfx.voting.services.impl;
 import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidateItem;
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
+import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
 import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.exceptions.UnknownCandidateException;
@@ -62,6 +63,15 @@ public class VotingService implements InitializingBean, IVotingService {
                         Map.Entry::getKey, entry -> entry.getValue().size()
                 ));
         return new VotingsResponse(map);
+    }
+
+    @Override
+    public VotingResponse getVotingResult(String candidateId) {
+        if (!candidateIds.contains(candidateId)) {
+            throw new UnknownCandidateException(candidateId);
+        }
+
+        return new VotingResponse(candidateId, votingResults.get(candidateId).size());
     }
 
     /**

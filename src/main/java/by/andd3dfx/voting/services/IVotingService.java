@@ -2,7 +2,10 @@ package by.andd3dfx.voting.services;
 
 import by.andd3dfx.voting.dto.request.VotingRequest;
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
+import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
+
+import javax.validation.constraints.NotNull;
 
 public interface IVotingService {
 
@@ -11,4 +14,6 @@ public interface IVotingService {
     void makeVote(String candidateId, VotingRequest votingRequest);
 
     VotingsResponse getVotingResults();
+
+    VotingResponse getVotingResult(@NotNull String candidateId);
 }
