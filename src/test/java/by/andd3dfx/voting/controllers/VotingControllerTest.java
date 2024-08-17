@@ -15,11 +15,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import static by.andd3dfx.voting.util.TestUtil.asJson;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -94,10 +94,18 @@ class VotingControllerTest {
         verify(votingService).getVotingResults();
     }
 
+    private VotingsResponse buildVotingResponse() {
+        return new VotingsResponse(
+                new HashMap<>() {{
+                    put("Candidate 54", 6);
+                }}
+        );
+    }
+
     @Test
     void getVotingResult() throws Exception {
         final String candidateId = "Candidate 45";
-        var response = new VotingResponse(candidateId, Set.of());
+        var response = new VotingResponse(candidateId, 4);
         given(votingService.getVotingResult(candidateId)).willReturn(response);
 
         mockMvc.perform(get("/votings/{candidateId}", candidateId))
@@ -108,11 +116,12 @@ class VotingControllerTest {
         verify(votingService).getVotingResult(candidateId);
     }
 
-    private VotingsResponse buildVotingResponse() {
-        return new VotingsResponse(
-                new HashMap<>() {{
-                    put("Candidate 54", Set.of());
-                }}
-        );
+    @Test
+    void deleteVotingResults() throws Exception {
+        mockMvc.perform(delete("/votings"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        verify(votingService).deleteVotingResults();
     }
 }

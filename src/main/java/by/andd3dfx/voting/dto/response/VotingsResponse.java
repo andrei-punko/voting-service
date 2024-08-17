@@ -5,12 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class VotingsResponse {
 
-    private Map<String, Set<String>> votings;
+    private Map<String, Integer> votings;
 }

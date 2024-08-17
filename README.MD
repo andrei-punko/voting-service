@@ -37,11 +37,21 @@ curl http://localhost:8090/candidates
 curl http://localhost:8090/votings
 ```
 
+- Get voting results for particular candidate
+```bash
+curl http://localhost:8090/votings/3
+```
+
 - Make vote
 ```bash
-curl -X POST http://localhost:8090/votings/3434 \
+curl -X POST http://localhost:8090/votings/3 \
   -H "Content-Type: application/json" \
   -d "{ \"name\": \"Andrei\", \"passportId\": \"MP345353634543\"}"
+```
+
+- Delete voting results
+```bash
+curl -X DELETE http://localhost:8090/votings
 ```
 
 ## How to run Spock-based functional tests

@@ -16,4 +16,6 @@ public interface IVotingService {
     VotingsResponse getVotingResults();
 
     VotingResponse getVotingResult(@NotNull String candidateId);
+
+    void deleteVotingResults();
 }

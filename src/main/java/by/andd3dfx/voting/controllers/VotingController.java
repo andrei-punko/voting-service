@@ -7,6 +7,7 @@ import by.andd3dfx.voting.dto.response.VotingsResponse;
 import by.andd3dfx.voting.services.IVotingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +43,11 @@ public class VotingController {
     @GetMapping("/votings/{candidateId}")
     public VotingResponse getVotingResult(@PathVariable @NotNull String candidateId) {
         return votingService.getVotingResult(candidateId);
+    }
+
+    @DeleteMapping("/votings")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteVotingResults() {
+        votingService.deleteVotingResults();
     }
 }

@@ -15,11 +15,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +31,9 @@ public class VotingService implements InitializingBean, IVotingService {
     private static final String DATA_CANDIDATES_JSON = "data/candidates.json";
 
     private List<CandidateItem> candidates;
-    private final Map<String, Set<String>> votingResults = new HashMap<>();
-    private final Set<String> votedPassportIds = new HashSet<>();
+    private final Set<String> candidateIds = new HashSet<>();
+    private final Map<String, Set<String>> votingResults = new ConcurrentHashMap<>();
+    private final Set<String> votedPassportIds = ConcurrentHashMap.newKeySet();
 
     @Override
     public CandidatesResponse getCandidates() {
@@ -40,7 +42,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public void makeVote(String candidateId, VotingRequest votingRequest) {
-        if (!votingResults.containsKey(candidateId)) {
+        if (!candidateIds.contains(candidateId)) {
             throw new UnknownCandidateException(candidateId);
         }
 
@@ -55,16 +57,24 @@ public class VotingService implements InitializingBean, IVotingService {
 
     @Override
     public VotingsResponse getVotingResults() {
-        return new VotingsResponse(Map.copyOf(votingResults));
+        var map = votingResults.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size()));
+        return new VotingsResponse(map);
     }
 
     @Override
     public VotingResponse getVotingResult(@NotNull String candidateId) {
-        if (!votingResults.containsKey(candidateId)) {
+        if (!candidateIds.contains(candidateId)) {
             throw new UnknownCandidateException(candidateId);
         }
 
-        return new VotingResponse(candidateId, votingResults.get(candidateId));
+        return new VotingResponse(candidateId, votingResults.get(candidateId).size());
+    }
+
+    @Override
+    public void deleteVotingResults() {
+        votingResults.values().forEach(Set::clear);
+        votedPassportIds.clear();
     }
 
     /**
@@ -79,6 +89,7 @@ public class VotingService implements InitializingBean, IVotingService {
         for (var candidate : candidates) {
             String id = candidate.getId();
             votingResults.put(id, new HashSet<>());
+            candidateIds.add(id);
         }
     }
 }

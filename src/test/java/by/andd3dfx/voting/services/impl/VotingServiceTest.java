@@ -46,11 +46,11 @@ class VotingServiceTest {
         assertThat(response.getVotings()).isEqualTo(buildEmptyVotingResult());
     }
 
-    private static Map<String, Set<Object>> buildEmptyVotingResult() {
+    private static Map<String, Integer> buildEmptyVotingResult() {
         return Map.of(
-                "54654", Set.of(),
-                "3434", Set.of(),
-                "4565", Set.of()
+                "54654", 0,
+                "3434", 0,
+                "4565", 0
         );
     }
 
@@ -69,15 +69,15 @@ class VotingServiceTest {
         checkVotingResult("3434", Set.of());
         checkVotingResult("4565", Set.of("ABC2", "ABC3"));
         assertThat(votingService.getVotingResults().getVotings()).isEqualTo(Map.of(
-                "54654", Set.of("ABC1"),
-                "3434", Set.of(),
-                "4565", Set.of("ABC2", "ABC3")
+                "54654", 1,
+                "3434", 0,
+                "4565", 2
         ));
     }
 
     private void checkVotingResult(String candidateId, Set<String> passportIds) {
         assertThat(votingService.getVotingResult(candidateId))
-                .isEqualTo(new VotingResponse(candidateId, passportIds));
+                .isEqualTo(new VotingResponse(candidateId, passportIds.size()));
     }
 
     @Test
@@ -122,5 +122,16 @@ class VotingServiceTest {
         } catch (DoubleVoteException uce) {
             assertThat(uce.getMessage()).isEqualTo("User already voted!");
         }
+    }
+
+    @Test
+    void deleteVotingResults() {
+        assertThat(votingService.getVotingResult("54654").getVotes()).isEqualTo(0);
+
+        votingService.makeVote("54654", new VotingRequest("ABC1"));
+        assertThat(votingService.getVotingResult("54654").getVotes()).isEqualTo(1);
+
+        votingService.deleteVotingResults();
+        assertThat(votingService.getVotingResult("54654").getVotes()).isEqualTo(0);
     }
 }
