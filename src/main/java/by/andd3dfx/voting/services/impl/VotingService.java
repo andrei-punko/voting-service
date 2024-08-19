@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class VotingService implements InitializingBean, IVotingService {
 
-    private final ObjectMapper mapper;
-
     private static final String DATA_CANDIDATES_JSON = "data/candidates.json";
+
+    private final ObjectMapper mapper;
 
     private List<CandidateItem> candidates;
     private final Set<String> candidateIds = new HashSet<>();
@@ -58,7 +58,9 @@ public class VotingService implements InitializingBean, IVotingService {
     @Override
     public VotingsResponse getVotingResults() {
         var map = votingResults.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size()));
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> entry.getValue().size()
+                ));
         return new VotingsResponse(map);
     }
 
@@ -87,7 +89,7 @@ public class VotingService implements InitializingBean, IVotingService {
                 });
 
         for (var candidate : candidates) {
-            String id = candidate.getId();
+            var id = candidate.getId();
             votingResults.put(id, new HashSet<>());
             candidateIds.add(id);
         }

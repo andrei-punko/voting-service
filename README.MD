@@ -10,7 +10,7 @@
 - K6 (install according to [manual](https://k6.io/docs/getting-started/installation))
 
 ## Implement Voting REST service with next operations
-- Get candidates (should be read from json file)
+- Get candidates (should be read from JSON file)
 - Make vote (by passport id) (no double vote allowed)
 - Get voting results
 
@@ -44,14 +44,14 @@ curl http://localhost:8090/votings/3
 
 - Make vote
 ```bash
-curl -X POST http://localhost:8090/votings/3 \
+curl -i -X POST http://localhost:8090/votings/3 \
   -H "Content-Type: application/json" \
-  -d "{ \"name\": \"Andrei\", \"passportId\": \"MP345353634543\"}"
+  -d "{ \"passportId\": \"MP345353634547\"}"
 ```
 
 - Delete voting results
 ```bash
-curl -X DELETE http://localhost:8090/votings
+curl -i -X DELETE http://localhost:8090/votings
 ```
 
 ## How to run Spock-based functional tests

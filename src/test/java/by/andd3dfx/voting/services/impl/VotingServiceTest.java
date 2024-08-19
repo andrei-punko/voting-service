@@ -31,7 +31,6 @@ class VotingServiceTest {
         var response = votingService.getCandidates();
 
         var candidates = response.getCandidates();
-        assertThat(candidates.size()).isEqualTo(3);
         assertThat(candidates).isEqualTo(List.of(
                 new CandidateItem("54654", "Test Candidate B"),
                 new CandidateItem("3434", "Test Candidate A"),
@@ -85,9 +84,9 @@ class VotingServiceTest {
         final String WRONG_CANDIDATE_ID = "7856";
         try {
             votingService.getVotingResult(WRONG_CANDIDATE_ID);
-            fail("UnknownCandidateException should be thrown!");
+            fail("UnknownCandidateException should be thrown");
         } catch (UnknownCandidateException uce) {
-            assertThat(uce.getMessage()).isEqualTo("Candidate id=%s is unknown".formatted(WRONG_CANDIDATE_ID));
+            assertThat(uce.getMessage()).isEqualTo("Unknown candidate id=" + WRONG_CANDIDATE_ID);
         }
     }
 
@@ -98,12 +97,12 @@ class VotingServiceTest {
             votingService.makeVote(WRONG_CANDIDATE_ID, new VotingRequest("322982"));
             fail("UnknownCandidateException should be thrown!");
         } catch (UnknownCandidateException uce) {
-            assertThat(uce.getMessage()).isEqualTo("Candidate id=%s is unknown".formatted(WRONG_CANDIDATE_ID));
+            assertThat(uce.getMessage()).isEqualTo("Unknown candidate id=" + WRONG_CANDIDATE_ID);
         }
     }
 
     @Test
-    public void makeVoteTryingDoubleVoteToOneCandidate() {
+    public void tryDoubleVoteSamePersonVotesForSameCandidate() {
         votingService.makeVote("54654", new VotingRequest("322982"));
         try {
             votingService.makeVote("54654", new VotingRequest("322982"));
@@ -114,7 +113,7 @@ class VotingServiceTest {
     }
 
     @Test
-    public void makeVoteTryingDoubleVoteToDifferentCandidates() {
+    public void tryDoubleVoteSamePersonVotesForDifferentCandidates() {
         votingService.makeVote("54654", new VotingRequest("322982"));
         try {
             votingService.makeVote("3434", new VotingRequest("322982"));
@@ -125,13 +124,34 @@ class VotingServiceTest {
     }
 
     @Test
-    void deleteVotingResults() {
-        assertThat(votingService.getVotingResult("54654").getVotes()).isEqualTo(0);
+    void getVotingResult() {
+        votingService.makeVote("54654", new VotingRequest("322982"));
+        votingService.makeVote("4565", new VotingRequest("322893"));
+        votingService.makeVote("4565", new VotingRequest("322894"));
 
-        votingService.makeVote("54654", new VotingRequest("ABC1"));
-        assertThat(votingService.getVotingResult("54654").getVotes()).isEqualTo(1);
+        checkVotesAmount("54654", 1);
+        checkVotesAmount("4565", 2);
+        checkVotesAmount("3434", 0);
+    }
+
+    private void checkVotesAmount(String candidateId, int expectedVotesAmount) {
+        assertThat(votingService.getVotingResult(candidateId))
+                .isEqualTo(new VotingResponse(candidateId, expectedVotesAmount));
+    }
+
+    @Test
+    void deleteVotingResults() {
+        votingService.makeVote("54654", new VotingRequest("322982"));
+        votingService.makeVote("4565", new VotingRequest("322893"));
+        votingService.makeVote("4565", new VotingRequest("322894"));
+        checkVotesAmount("54654", 1);
+        checkVotesAmount("4565", 2);
+        checkVotesAmount("3434", 0);
 
         votingService.deleteVotingResults();
-        assertThat(votingService.getVotingResult("54654").getVotes()).isEqualTo(0);
+
+        checkVotesAmount("54654", 0);
+        checkVotesAmount("4565", 0);
+        checkVotesAmount("3434", 0);
     }
 }
