@@ -5,6 +5,7 @@ import by.andd3dfx.voting.dto.response.CandidateItem;
 import by.andd3dfx.voting.dto.response.CandidatesResponse;
 import by.andd3dfx.voting.dto.response.VotingResponse;
 import by.andd3dfx.voting.dto.response.VotingsResponse;
+import by.andd3dfx.voting.exceptions.DoubleVoteException;
 import by.andd3dfx.voting.services.impl.VotingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import java.util.List;
 
 import static by.andd3dfx.voting.util.TestUtil.asJson;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -70,10 +73,27 @@ class VotingControllerTest {
     }
 
     @Test
-    void makeVoteWhenPasswordIdNotPopulated() throws Exception {
-        var votingRequest = new VotingRequest(null);
+    void makeVoteWhenPassportIdIsAbsent() throws Exception {
+        final String candidateId = "Candidate 45";
+        final VotingRequest votingRequest = new VotingRequest(null);
 
-        mockMvc.perform(post("/votings/{candidateId}", "Candidate 45")
+        mockMvc.perform(post("/votings/{candidateId}", candidateId)
+                        .content(asJson(votingRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        verify(votingService, never()).makeVote(candidateId, votingRequest);
+    }
+
+    @Test
+    void makeDoubleVote() throws Exception {
+        final String candidateId = "Candidate 45";
+        final VotingRequest votingRequest = new VotingRequest("P12345WE789");
+        doThrow(new DoubleVoteException()).when(votingService).makeVote(candidateId, votingRequest);
+
+        mockMvc.perform(post("/votings/{candidateId}", candidateId)
                         .content(asJson(votingRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
