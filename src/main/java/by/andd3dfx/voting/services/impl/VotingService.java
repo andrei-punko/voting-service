@@ -15,6 +15,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class VotingService implements InitializingBean, IVotingService {
 
     private final ObjectMapper mapper;
 
-    private List<CandidateItem> candidates;
+    private final List<CandidateItem> candidates = new ArrayList<>();
     private final Set<String> candidateIds = new HashSet<>();
     private final Map<String, Set<String>> votingResults = new ConcurrentHashMap<>();
     private final Set<String> votedPassportIds = ConcurrentHashMap.newKeySet();
@@ -84,9 +85,9 @@ public class VotingService implements InitializingBean, IVotingService {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        candidates = mapper.readValue(this.getClass().getClassLoader().getResourceAsStream(DATA_CANDIDATES_JSON),
+        candidates.addAll(mapper.readValue(this.getClass().getClassLoader().getResourceAsStream(DATA_CANDIDATES_JSON),
                 new TypeReference<>() {
-                });
+                }));
 
         for (var candidate : candidates) {
             var id = candidate.getId();
