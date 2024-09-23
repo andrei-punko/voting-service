@@ -97,3 +97,7 @@ k6 run -o influxdb=http://localhost:8086/mydb script.js
 ### Import dashboard to Grafana from file `./load-tests/k6-grafana-dashboard.json` and get results
 
 ![K6 Grafana dashboard](./load-tests/k6-grafana-dashboard.png)
+
+## Video with description of the project refactoring
+
+[YouTube link](https://youtu.be/esueccOEQZE)
