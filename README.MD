@@ -58,16 +58,16 @@ curl -i -X DELETE http://localhost:8090/votings
 
 ## How to run Spock-based functional tests
 ```bash
-cd func-tests
+cd func-test
 ./gradlew clean build
 ```
 
-Check tests report at `./func-tests/build/spock-reports/index.html`
+Check tests report at `./func-test/build/spock-reports/index.html`
 
 ## How to run k6-based performance tests (with console output)
 
 ```bash
-cd load-tests
+cd load-test
 k6 run script.js
 ```
 
@@ -94,9 +94,9 @@ HTTP Method: GET
 k6 run -o influxdb=http://localhost:8086/mydb script.js
 ```
 
-### Import dashboard to Grafana from file `./load-tests/k6-grafana-dashboard.json` and get results
+### Import dashboard to Grafana from file `./load-test/k6-grafana-dashboard.json` and get results
 
-![K6 Grafana dashboard](./load-tests/k6-grafana-dashboard.png)
+![K6 Grafana dashboard](./load-test/k6-grafana-dashboard.png)
 
 ## Video with description of the project refactoring
 
