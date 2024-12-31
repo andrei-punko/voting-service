@@ -84,7 +84,7 @@ k6 run script.js
 
 ## How to run k6-based performance tests (with Grafana visualization)
 
-### Start InfluxDB and Grafana (according to https://k6.io/blog/k6-loves-grafana/)
+### Start InfluxDB and Grafana (according to https://grafana.com/docs/k6/latest/results-output/grafana-dashboards/)
 
 ```
 git clone https://github.com/grafana/k6 && cd k6
@@ -108,10 +108,10 @@ HTTP Method: GET
 k6 run -o influxdb=http://localhost:8086/mydb script.js
 ```
 
-### Import dashboard to Grafana from file `./load-test/k6-grafana-dashboard.json` and get results
+### Import dashboard to Grafana from file `load-test/k6-grafana-dashboard.json` and get results
 
 ![K6 Grafana dashboard](./load-test/k6-grafana-dashboard.png)
 
-## Video with description of the project refactoring
+## YouTube video with description of the project refactoring
 
-[YouTube link](https://youtu.be/esueccOEQZE)
+[Рефакторинг Spring Boot сервиса из тестового задания](https://youtu.be/esueccOEQZE)
