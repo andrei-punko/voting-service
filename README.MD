@@ -1,4 +1,4 @@
-# Voting REST service test task
+# Voting REST service (test task)
 
 ![Java CI with Maven](https://github.com/andrei-punko/voting-service/workflows/Java%20CI%20with%20Maven/badge.svg)
 [![Coverage](.github/badges/jacoco.svg)](https://github.com/andrei-punko/voting-service/actions/workflows/maven.yml)
@@ -8,7 +8,7 @@
 
 - Maven 3
 - JDK 21
-- K6 (install according to [manual](https://k6.io/docs/getting-started/installation))
+- K6 for performance tests (install according to [manual](https://k6.io/docs/getting-started/installation))
 
 ## Implement Voting REST service with next operations
 
@@ -16,13 +16,13 @@
 - Make vote (by passport id) (no double vote allowed)
 - Get voting results
 
-## How to build
+## How to build project
 
     mvn clean install
 
-## How to start
+## How to start application
 
-Use `run.bat` script in project root folder or use docker-compose:
+Use `run.bat` script in project root folder or use `docker-compose`:
 
 ```
 docker-compose up
@@ -75,42 +75,14 @@ cd func-test
 
 Check tests report at `./func-test/build/spock-reports/index.html`
 
-## How to run k6-based performance tests (with console output)
+## How to run k6-based performance tests
 
 ```bash
 cd load-test
 k6 run script.js
 ```
 
-## How to run k6-based performance tests (with Grafana visualization)
-
-### Start InfluxDB and Grafana (according to https://grafana.com/docs/k6/latest/results-output/grafana-dashboards/)
-
-```
-git clone https://github.com/grafana/k6 && cd k6
-git submodule update --init
-docker-compose up -d influxdb grafana
-```
-
-Grafana available via http://localhost:3000
-
-Add datasource with next params:
-<pre>
-URL: http://localhost:8086
-Access: Browser
-Database: mydb
-HTTP Method: GET
-</pre>
-
-### Run load test with sending data to Grafana
-
-```
-k6 run -o influxdb=http://localhost:8086/mydb script.js
-```
-
-### Import dashboard to Grafana from file `load-test/k6-grafana-dashboard.json` and get results
-
-![K6 Grafana dashboard](./load-test/k6-grafana-dashboard.png)
+Check tests report in console
 
 ## YouTube video with description of the project refactoring
 
